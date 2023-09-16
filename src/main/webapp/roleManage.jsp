@@ -47,7 +47,7 @@
           <tr>
             <td><%= role.getId() %></td>
             <td><%= role.getName() %></td>
-            <td><%= role.getDescription() %></td>
+            <td><%= role.getDescription() == null ? "" : role.getDescription() %></td>
             <td><%= role.getStatus() %></td>
             <td>
               <div class="d-flex gap-1">

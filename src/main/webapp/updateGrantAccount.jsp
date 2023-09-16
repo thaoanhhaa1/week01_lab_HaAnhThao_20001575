@@ -82,7 +82,7 @@
                 </div>
                 <div class="mb-3">
                     <label for="note" class="form-label">Note</label>
-                    <textarea class="form-control" name="note" id="note"><%= grantAccess.getNote() %></textarea>
+                    <textarea class="form-control" name="note" id="note"><%= grantAccess.getNote() == null ? "" : grantAccess.getNote() %></textarea>
                     <div class="invalid-feedback">
                         Please provide a valid zip.
                     </div>

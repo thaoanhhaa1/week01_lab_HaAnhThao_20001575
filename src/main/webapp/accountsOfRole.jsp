@@ -64,7 +64,7 @@
             </div>
             <div class="col-4 fw-semibold">Description</div>
             <div class="col-8">
-                <input value="<%= role.getDescription() %>" class="form-control" type="text"
+                <input value="<%= role.getDescription() == null ? "" : role.getDescription() %>" class="form-control" type="text"
                        disabled readonly>
             </div>
             <div class="col-4 fw-semibold">Status</div>
@@ -94,10 +94,10 @@
                         <%= account.getFullName() %>
                     </td>
                     <td>
-                        <%= account.getEmail() %>
+                        <%= account.getEmail() == null ? "" : account.getEmail() %>
                     </td>
                     <td>
-                        <%= account.getPhone() %>
+                        <%= account.getPhone() == null ? "" : account.getPhone() %>
                     </td>
                     <td>
                         <%= account.getStatus().equals(Status.active) ? "Active" : "Deactive" %>

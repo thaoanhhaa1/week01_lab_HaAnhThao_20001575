@@ -1,11 +1,16 @@
 <%@ page import="vn.edu.iuh.fit.entities.GrantAccess" %>
 <%@ page import="java.util.List" %>
+<%@ page import="vn.edu.iuh.fit.entities.Account" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
-    if (session.getAttribute("account") == null) {
+    Object accountObject = session.getAttribute("account");
+
+    if (accountObject == null) {
         response.sendRedirect("index.jsp");
         return;
     }
+
+    Account account = (Account) accountObject;
 %>
 <html>
 
@@ -20,9 +25,9 @@
 <body>
 <main>
     <% if ((Boolean) session.getAttribute("isAdmin")) { %>
-    <jsp:include page="dashboardHeader.jsp"></jsp:include>
+    <jsp:include page="dashboardHeader.jsp" />
     <% } else { %>
-    <jsp:include page="userHeader.jsp"></jsp:include>
+    <jsp:include page="userHeader.jsp" />
     <% } %>
     <section class="container">
         <h1 class="mb-3">Profile Page</h1>
@@ -30,20 +35,20 @@
         <div class="row row-gap-3 align-items-center">
             <div class="col-4 fw-semibold">Account ID</div>
             <div class="col-8">
-                <input value="${account.id}" class="form-control" type="text" disabled readonly>
+                <input value="<%=account.getId() %>" class="form-control" type="text" disabled readonly>
             </div>
             <div class="col-4 fw-semibold">Full name</div>
             <div class="col-8">
-                <input value="${account.fullName}" class="form-control" type="text" disabled
+                <input value="<%=account.getFullName() %>" class="form-control" type="text" disabled
                        readonly>
             </div>
             <div class="col-4 fw-semibold">Email</div>
             <div class="col-8">
-                <input value="${account.email}" class="form-control" type="text" disabled readonly>
+                <input value="<%=account.getEmail() == null ? "" : account.getEmail() %>" class="form-control" type="text" disabled readonly>
             </div>
             <div class="col-4 fw-semibold">Phone</div>
             <div class="col-8">
-                <input value="${account.phone}" class="form-control" type="text" disabled readonly>
+                <input value="<%=account.getPhone() == null ? "" : account.getPhone() %>" class="form-control" type="text" disabled readonly>
             </div>
         </div>
 
@@ -67,10 +72,10 @@
                     <%= ga.getRole().getName() %>
                 </td>
                 <td>
-                    <%= ga.getRole().getDescription() %>
+                    <%= ga.getRole().getDescription() == null ? "" : ga.getRole().getDescription() %>
                 </td>
                 <td>
-                    <%= ga.getNote() %>
+                    <%= ga.getNote() == null ? "" : ga.getNote() %>
                 </td>
             </tr>
             <% } %>

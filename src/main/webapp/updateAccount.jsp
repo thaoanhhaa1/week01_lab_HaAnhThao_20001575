@@ -65,7 +65,7 @@
             </div>
             <div class="mb-3">
                 <label for="email" class="form-label">Email</label>
-                <input value="<%= account.getEmail() %>" type="email" class="form-control"
+                <input value="<%= account.getEmail() == null ? "" : account.getEmail() %>" type="email" class="form-control"
                        name="email" id="email">
                 <div class="invalid-feedback">
                     Please provide a valid zip.
@@ -73,7 +73,7 @@
             </div>
             <div class="mb-3">
                 <label for="phone" class="form-label">Phone</label>
-                <input value="<%= account.getPhone() %>" type="tel" class="form-control"
+                <input value="<%= account.getPhone() == null ? "" : account.getPhone() %>" type="tel" class="form-control"
                        name="phone" id="phone">
                 <div class="invalid-feedback">
                     Please provide a valid zip.

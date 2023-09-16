@@ -56,7 +56,7 @@
             </div>
             <div class="mb-3">
                 <label for="description" class="form-label">Description</label>
-                <input value="<%= role.getDescription() %>" type="text" class="form-control"
+                <input value="<%= role.getDescription() == null ? "" : role.getDescription() %>" type="text" class="form-control"
                        name="description" id="description">
                 <div class="invalid-feedback">
                     Please provide a valid zip.

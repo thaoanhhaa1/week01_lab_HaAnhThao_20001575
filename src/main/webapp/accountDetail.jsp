@@ -61,12 +61,12 @@
             </div>
             <div class="col-4 fw-semibold">Email</div>
             <div class="col-8">
-                <input value="<%= account.getEmail() %>" class="form-control" type="text"
+                <input value="<%= account.getEmail() == null ? "" : account.getEmail() %>" class="form-control" type="text"
                        disabled readonly>
             </div>
             <div class="col-4 fw-semibold">Phone</div>
             <div class="col-8">
-                <input value="<%= account.getPhone() %>" class="form-control" type="text"
+                <input value="<%= account.getPhone() == null ? "" : account.getPhone() %>" class="form-control" type="text"
                        disabled readonly>
             </div>
         </div>
@@ -97,13 +97,13 @@
                     <%= ga.getRole().getName() %>
                 </td>
                 <td>
-                    <%= ga.getRole().getDescription() %>
+                    <%= ga.getRole().getDescription() == null ? "" : ga.getRole().getDescription() %>
                 </td>
                 <td>
                     <%= ga.isGrant() ? "Enable" : "Disable" %>
                 </td>
                 <td>
-                    <%= ga.getNote() %>
+                    <%= ga.getNote() == null ? "" : ga.getNote() %>
                 </td>
                 <td>
                     <div class="d-flex gap-1">

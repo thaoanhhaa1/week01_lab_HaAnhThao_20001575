@@ -39,8 +39,8 @@
                         <tr>
                             <td><%= a.getId() %></td>
                             <td><%= a.getFullName() %></td>
-                            <td><%= a.getEmail() %></td>
-                            <td><%= a.getPhone() %></td>
+                            <td><%= a.getEmail() == null ? "" : a.getEmail() %></td>
+                            <td><%= a.getPhone() == null ? "" : a.getPhone() %></td>
                             <td><%= a.getStatus() %></td>
                             <td>
                                 <div class="d-flex gap-1">
