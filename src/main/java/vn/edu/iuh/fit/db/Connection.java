@@ -5,7 +5,7 @@ import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 
 public class Connection {
-    private static EntityManager em;
+    private final EntityManager em;
     private static Connection connection;
 
     private Connection() {
@@ -13,9 +13,13 @@ public class Connection {
         em = emf.createEntityManager();
     }
 
-    public static EntityManager getEntityManager() {
+    public EntityManager getEntityManager() {
+        return em;
+    }
+
+    public static Connection getInstance() {
         if (connection == null)
             connection = new Connection();
-        return em;
+        return connection;
     }
 }

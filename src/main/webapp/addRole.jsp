@@ -1,4 +1,3 @@
-<%@ page import="vn.edu.iuh.fit.entities.Account" %>
 <%@ page import="vn.edu.iuh.fit.entities.Status" %>
 <%@ page import="vn.edu.iuh.fit.entities.Role" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>

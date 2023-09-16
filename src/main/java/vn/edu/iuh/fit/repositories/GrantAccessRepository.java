@@ -15,7 +15,7 @@ public class GrantAccessRepository {
     private EntityManager em;
 
     public GrantAccessRepository() {
-        em = Connection.getEntityManager();
+        em = Connection.getInstance().getEntityManager();
     }
 
     public boolean add(GrantAccess grantAccess) {

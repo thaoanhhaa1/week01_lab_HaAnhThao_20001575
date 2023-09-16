@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.jetbrains.annotations.NotNull;
+import vn.edu.iuh.fit.db.Connection;
 import vn.edu.iuh.fit.entities.*;
 import vn.edu.iuh.fit.services.AccountServices;
 import vn.edu.iuh.fit.services.GrantAccessServices;
@@ -18,14 +19,16 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-@WebServlet(urlPatterns = {"/ControlServlet", "/"})
+@WebServlet(urlPatterns = {"/ControlServlet"})
 public class ControlServlet extends HttpServlet {
-    private final AccountServices accountServices;
-    private final LogServices logServices;
-    private final GrantAccessServices grantAccessServices;
-    private final RoleServices roleServices;
+    private AccountServices accountServices;
+    private LogServices logServices;
+    private GrantAccessServices grantAccessServices;
+    private RoleServices roleServices;
 
-    public ControlServlet() {
+    @Override
+    public void init() throws ServletException {
+        Connection.getInstance().getEntityManager();
         logServices = new LogServices();
         accountServices = new AccountServices();
         grantAccessServices = new GrantAccessServices();

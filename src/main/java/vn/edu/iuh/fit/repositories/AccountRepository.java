@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class AccountRepository extends CRUDRepository<Account, String> {
-    private final EntityManager entityManager = Connection.getEntityManager();
+    private final EntityManager entityManager = Connection.getInstance().getEntityManager();
 
     public Optional<Account> isLogin(String username, String password) {
         try {

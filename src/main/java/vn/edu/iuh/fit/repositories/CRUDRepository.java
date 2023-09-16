@@ -3,8 +3,6 @@ package vn.edu.iuh.fit.repositories;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import vn.edu.iuh.fit.db.Connection;
-import vn.edu.iuh.fit.entities.Account;
-import vn.edu.iuh.fit.entities.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +12,7 @@ public abstract class CRUDRepository<T, K> {
     protected final EntityManager entityManager;
 
     public CRUDRepository() {
-        entityManager = Connection.getEntityManager();
+        entityManager = Connection.getInstance().getEntityManager();
     }
 
     public Optional<T> findById(Class<T> clazz, K id) {
