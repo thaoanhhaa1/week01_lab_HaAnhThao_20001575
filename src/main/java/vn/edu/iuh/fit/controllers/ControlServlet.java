@@ -7,7 +7,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.jetbrains.annotations.NotNull;
-import vn.edu.iuh.fit.db.Connection;
 import vn.edu.iuh.fit.entities.*;
 import vn.edu.iuh.fit.services.AccountServices;
 import vn.edu.iuh.fit.services.GrantAccessServices;
@@ -27,8 +26,7 @@ public class ControlServlet extends HttpServlet {
     private RoleServices roleServices;
 
     @Override
-    public void init() throws ServletException {
-        Connection.getInstance().getEntityManager();
+    public void init() {
         logServices = new LogServices();
         accountServices = new AccountServices();
         grantAccessServices = new GrantAccessServices();
@@ -174,7 +172,7 @@ public class ControlServlet extends HttpServlet {
         resp.sendRedirect("index.jsp");
     }
 
-    private void handleAddAccount(@NotNull HttpServletRequest req, @NotNull HttpServletResponse resp) throws IOException, ServletException {
+    private void handleAddAccount(@NotNull HttpServletRequest req, @NotNull HttpServletResponse resp) throws IOException {
         Account newAccount = getAccount(req);
         boolean add = accountServices.add(newAccount);
         HttpSession session = req.getSession(true);
@@ -192,6 +190,42 @@ public class ControlServlet extends HttpServlet {
 
             resp.sendRedirect("addAccount.jsp");
         }
+    }
+
+    private Account findAccount(@NotNull HttpServletRequest req, @NotNull HttpServletResponse resp) throws ServletException, IOException {
+        String id = req.getParameter("id");
+
+        if (id == null) {
+            req.getRequestDispatcher("notFound.jsp").forward(req, resp);
+            return null;
+        }
+
+        Optional<Account> account = accountServices.findById(id);
+
+        if (account.isEmpty()) {
+            req.getRequestDispatcher("notFound.jsp").forward(req, resp);
+            return null;
+        }
+
+        return account.get();
+    }
+
+    private Role findRoleById(@NotNull HttpServletRequest req, @NotNull HttpServletResponse resp) throws ServletException, IOException {
+        String roleId = req.getParameter("id");
+
+        if (roleId == null) {
+            req.getRequestDispatcher("notFound.jsp").forward(req, resp);
+            return null;
+        }
+
+        Optional<Role> role = roleServices.findById(roleId);
+
+        if (role.isEmpty()) {
+            req.getRequestDispatcher("notFound.jsp").forward(req, resp);
+            return null;
+        }
+
+        return role.get();
     }
 
     private void handleGetDashboard(@NotNull HttpServletRequest req, @NotNull HttpServletResponse resp) throws IOException {
@@ -226,16 +260,9 @@ public class ControlServlet extends HttpServlet {
     }
 
     private void handleGetUpdateAccount(@NotNull HttpServletRequest req, @NotNull HttpServletResponse resp) throws ServletException, IOException {
-        String id = req.getParameter("id");
+        Account account = findAccount(req, resp);
 
-        Optional<Account> account = accountServices.findById(id);
-
-        if (account.isEmpty()) {
-            req.getRequestDispatcher("notFound.jsp").forward(req, resp);
-            return;
-        }
-
-        req.setAttribute("account-update", account.get());
+        req.setAttribute("account-update", account);
         req.getRequestDispatcher("updateAccount.jsp").forward(req, resp);
     }
 
@@ -272,28 +299,15 @@ public class ControlServlet extends HttpServlet {
     }
 
     private void handleGetDetailAccount(@NotNull HttpServletRequest req, @NotNull HttpServletResponse resp) throws ServletException, IOException {
-        String id = req.getParameter("id");
-
-        if (id == null) {
-            req.getRequestDispatcher("notFound.jsp").forward(req, resp);
-            return;
-        }
-
-        Optional<Account> account = accountServices.findById(id);
-
-        if (account.isEmpty()) {
-            req.getRequestDispatcher("notFound.jsp").forward(req, resp);
-            return;
-        }
-
-        Account acc = account.get();
-        List<GrantAccess> grantAccesses = grantAccessServices.getAllGrantAccessByAccount(id);
+        Account acc = findAccount(req, resp);
+        assert acc != null;
+        List<GrantAccess> grantAccesses = grantAccessServices.getAllGrantAccessByAccount(acc.getId());
         HttpSession session = req.getSession(true);
 
         session.setAttribute("account-detail", acc);
         session.setAttribute("grant-accesses-detail", grantAccesses);
 
-        resp.sendRedirect("accountDetail.jsp?id=" + id);
+        resp.sendRedirect("accountDetail.jsp?id=" + acc.getId());
     }
 
     private void handleDisableGrantAccount(@NotNull HttpServletRequest req, @NotNull HttpServletResponse resp) throws IOException {
@@ -373,10 +387,8 @@ public class ControlServlet extends HttpServlet {
         String id = req.getParameter("id");
         String roleId = req.getParameter("role-id");
         String grant = req.getParameter("grant");
-        boolean isGrant = false;
+        boolean isGrant = grant != null && grant.equals("active");
 
-        if (grant != null && grant.equals("active"))
-            isGrant = true;
         String note = req.getParameter("note");
 
         GrantAccess grantAccess = new GrantAccess(new Role(roleId), new Account(id), isGrant, note);
@@ -422,25 +434,14 @@ public class ControlServlet extends HttpServlet {
     }
 
     private void handleGetAccountByRole(@NotNull HttpServletRequest req, @NotNull HttpServletResponse resp) throws ServletException, IOException {
-        String roleId = req.getParameter("id");
+        Role role = findRoleById(req, resp);
 
-        if (roleId == null) {
-            req.getRequestDispatcher("notFound.jsp").forward(req, resp);
-            return;
-        }
-
-        Optional<Role> role = roleServices.findById(roleId);
-
-        if (role.isEmpty()) {
-            req.getRequestDispatcher("notFound.jsp").forward(req, resp);
-            return;
-        }
-
-        List<Account> accounts = accountServices.getAccountByRole(roleId);
+        assert role != null;
+        List<Account> accounts = accountServices.getAccountByRole(role.getId());
         HttpSession session = req.getSession(true);
-        session.setAttribute("role", role.get());
+        session.setAttribute("role", role);
         session.setAttribute("accounts", accounts);
-        resp.sendRedirect("accountsOfRole.jsp?id=" + roleId);
+        resp.sendRedirect("accountsOfRole.jsp?id=" + role.getId());
     }
 
     private @NotNull Role getRole(@NotNull HttpServletRequest req) {
@@ -453,7 +454,7 @@ public class ControlServlet extends HttpServlet {
         return new Role(id, name, description, st);
     }
 
-    private void handlePostAddRole(@NotNull HttpServletRequest req, @NotNull HttpServletResponse resp) throws IOException, ServletException {
+    private void handlePostAddRole(@NotNull HttpServletRequest req, @NotNull HttpServletResponse resp) throws IOException {
         Role role = getRole(req);
         boolean b = roleServices.addRole(role);
         HttpSession session = req.getSession(true);
@@ -474,24 +475,13 @@ public class ControlServlet extends HttpServlet {
     }
 
     private void handleGetUpdateRole(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String id = req.getParameter("id");
-
-        if (id == null) {
-            req.getRequestDispatcher("notFound.jsp").forward(req, resp);
-            return;
-        }
-
-        Optional<Role> role = roleServices.findById(id);
-
-        if (role.isEmpty()) {
-            req.getRequestDispatcher("notFound.jsp").forward(req, resp);
-            return;
-        }
+        Role role = findRoleById(req, resp);
 
         HttpSession session = req.getSession(true);
 
-        session.setAttribute("role", role.get());
-        resp.sendRedirect("updateRole.jsp?id=" + id);
+        session.setAttribute("role", role);
+        assert role != null;
+        resp.sendRedirect("updateRole.jsp?id=" + role.getId());
     }
 
     private void handlePostUpdateRole(@NotNull HttpServletRequest req, @NotNull HttpServletResponse resp) throws IOException {
@@ -516,31 +506,20 @@ public class ControlServlet extends HttpServlet {
     }
 
     private void handleGetAddGrantAccess(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String id = req.getParameter("id");
-
-        if (id == null) {
-            req.getRequestDispatcher("notFound.jsp").forward(req, resp);
-            return;
-        }
-
-        Optional<Account> account = accountServices.findById(id);
-
-        if (account.isEmpty()) {
-            req.getRequestDispatcher("notFound.jsp").forward(req, resp);
-            return;
-        }
+        Account account = findAccount(req, resp);
 
         HttpSession session = req.getSession(true);
-        List<Role> roles = roleServices.getNewRoleForAccount(id);
+        assert account != null;
+        List<Role> roles = roleServices.getNewRoleForAccount(account.getId());
 
         if (roles.isEmpty()) {
             session.setAttribute("toast-message", "Account already has all roles!");
             session.setAttribute("toast-type", "info");
-            resp.sendRedirect("ControlServlet?action=account-detail&id=" + id);
+            resp.sendRedirect("ControlServlet?action=account-detail&id=" + account.getId());
         } else {
-            session.setAttribute("accountRole", account.get());
+            session.setAttribute("accountRole", account);
             session.setAttribute("roles", roles);
-            resp.sendRedirect("addGrantAccess.jsp?id=" + id);
+            resp.sendRedirect("addGrantAccess.jsp?id=" + account.getId());
         }
     }
 
