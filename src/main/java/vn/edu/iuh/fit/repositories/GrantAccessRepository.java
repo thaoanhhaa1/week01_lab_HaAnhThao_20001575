@@ -18,6 +18,26 @@ public class GrantAccessRepository {
         em = Connection.getEntityManager();
     }
 
+    public boolean add(GrantAccess grantAccess) {
+        EntityTransaction transaction = null;
+
+        try {
+             transaction = em.getTransaction();
+             transaction.begin();
+
+             em.persist(grantAccess);
+
+             transaction.commit();
+             return true;
+        } catch (Exception e) {
+            assert transaction != null;
+            transaction.rollback();
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
     public List<GrantAccess> getGrantAccessByAccount(String accountId) {
         List<GrantAccess> grantAccesses = new ArrayList<>();
 

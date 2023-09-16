@@ -32,4 +32,8 @@ public class GrantAccessServices {
     public Optional<Boolean> update(GrantAccess grantAccess) {
         return grantAccessRepository.update(grantAccess);
     }
+
+    public boolean add(GrantAccess grantAccess) {
+        return grantAccessRepository.add(grantAccess);
+    }
 }

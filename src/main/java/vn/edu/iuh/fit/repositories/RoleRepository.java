@@ -46,4 +46,17 @@ public class RoleRepository extends CRUDRepository<Role, String> {
 
         return Optional.of(false);
     }
+
+    public List<Role> getNewRoleForAccount(String accountId) {
+        try {
+            return entityManager.createQuery("FROM Role WHERE status = ?2 AND id NOT IN (SELECT ga.role.id FROM GrantAccess ga WHERE ga.account.id = ?1)", Role.class)
+                    .setParameter(1, accountId)
+                    .setParameter(2, Status.active)
+                    .getResultList();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return new ArrayList<>();
+    }
 }

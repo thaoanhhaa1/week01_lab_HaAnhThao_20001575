@@ -37,4 +37,8 @@ public class RoleServices {
     public Optional<Boolean> update(Role role) {
         return roleRepository.updateById(role, role.getId());
     }
+
+    public List<Role> getNewRoleForAccount(String accountId) {
+        return roleRepository.getNewRoleForAccount(accountId);
+    }
 }

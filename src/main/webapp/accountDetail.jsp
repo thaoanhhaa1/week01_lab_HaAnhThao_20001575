@@ -58,8 +58,13 @@
                        disabled readonly>
             </div>
         </div>
-
-        <table class="table table-hover table-striped mt-3">
+        <div class="d-flex align-items-center justify-content-between mt-3 mb-2 gap-3">
+            <h2 class="mb-0">Roles</h2>
+            <a class="btn btn-outline-primary" href="ControlServlet?action=add-grant-access&id=<%= account.getId() %>">
+                <i class="fa-solid fa-plus"></i>
+            </a>
+        </div>
+        <table class="table table-hover table-striped">
             <thead>
             <tr>
                 <th>Role id</th>

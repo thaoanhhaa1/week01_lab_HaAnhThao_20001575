@@ -61,6 +61,9 @@ public class ControlServlet extends HttpServlet {
             case "update-role":
                 handleGetUpdateRole(req, resp);
                 break;
+            case "add-grant-access":
+                handleGetAddGrantAccess(req, resp);
+                break;
             default:
                 req.getRequestDispatcher("notFound.jsp").forward(req, resp);
         }
@@ -100,6 +103,9 @@ public class ControlServlet extends HttpServlet {
                 break;
             case "update-role":
                 handlePostUpdateRole(req, resp);
+                break;
+            case "add-grant-account":
+                handlePostAddGrantAccount(req, resp);
                 break;
             default:
                 req.getRequestDispatcher("notFound.jsp").forward(req, resp);
@@ -257,8 +263,6 @@ public class ControlServlet extends HttpServlet {
     }
 
     private void handleGetDetailAccount(@NotNull HttpServletRequest req, @NotNull HttpServletResponse resp) throws ServletException, IOException {
-        System.out.println("=== handleGetDetailAccount ===");
-
         String id = req.getParameter("id");
 
         if (id == null) {
@@ -275,7 +279,6 @@ public class ControlServlet extends HttpServlet {
 
         Account acc = account.get();
         List<GrantAccess> grantAccesses = grantAccessServices.getAllGrantAccessByAccount(id);
-        System.out.println(grantAccesses);
 
         req.setAttribute("account", acc);
         req.setAttribute("grant-accesses", grantAccesses);
@@ -498,6 +501,58 @@ public class ControlServlet extends HttpServlet {
             session.setAttribute("toast-type", "danger");
 
             resp.sendRedirect("updateRole.jsp?id=" + role.getId());
+        }
+    }
+
+    private void handleGetAddGrantAccess(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String id = req.getParameter("id");
+
+        if (id == null) {
+            req.getRequestDispatcher("notFound.jsp").forward(req, resp);
+            return;
+        }
+
+        Optional<Account> account = accountServices.findById(id);
+
+        if (account.isEmpty()) {
+            req.getRequestDispatcher("notFound.jsp").forward(req, resp);
+            return;
+        }
+
+        HttpSession session = req.getSession(true);
+        List<Role> roles = roleServices.getNewRoleForAccount(id);
+
+        if (roles.isEmpty()) {
+            session.setAttribute("toast-message", "Account already has all roles!");
+            session.setAttribute("toast-type", "info");
+            resp.sendRedirect("ControlServlet?action=account-detail&id=" + id);
+        } else {
+            session.setAttribute("accountRole", account.get());
+            session.setAttribute("roles", roles);
+            resp.sendRedirect("addGrantAccess.jsp?id=" + id);
+        }
+    }
+
+    private void handlePostAddGrantAccount(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        String id = req.getParameter("id");
+        String roleId = req.getParameter("role-id");
+        String note = req.getParameter("note");
+
+        GrantAccess grantAccess = new GrantAccess(new Role(roleId), new Account(id), true, note);
+
+        boolean b = grantAccessServices.add(grantAccess);
+        HttpSession session = req.getSession(true);
+
+        if (b) {
+            session.setAttribute("toast-message", "Add role successfully!");
+            session.setAttribute("toast-type", "success");
+            resp.sendRedirect("ControlServlet?action=account-detail&id=" + id);
+        } else {
+            session.setAttribute("toast-message", "Add role failed.");
+            session.setAttribute("toast-type", "danger");
+            session.setAttribute("role-id", roleId);
+            session.setAttribute("note", note);
+            resp.sendRedirect("ControlServlet?action=add-grant-access&id=" + id);
         }
     }
 }
