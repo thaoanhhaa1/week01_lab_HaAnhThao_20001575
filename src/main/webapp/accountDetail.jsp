@@ -10,12 +10,24 @@
         request.getRequestDispatcher("forbidden.jsp").forward(request, response);
         return;
     }
-    Object accountObject = request.getAttribute("account");
-    if (accountObject == null) {
+
+    String id = request.getParameter("id");
+    if (id == null) {
         request.getRequestDispatcher("notFound.jsp").forward(request, response);
         return;
     }
-    Account account = (Account) accountObject; %>
+
+    Object accountObject = session.getAttribute("account-detail");
+    Object grantAccessesObject = session.getAttribute("grant-accesses-detail");
+    session.removeAttribute("account-detail");
+    session.removeAttribute("grant-accesses-detail");
+    if (accountObject == null || grantAccessesObject == null) {
+        response.sendRedirect("ControlServlet?action=account-detail&id=" + id);
+        return;
+    }
+    Account account = (Account) accountObject;
+    List<GrantAccess> grantAccesses = (List<GrantAccess>) grantAccessesObject;
+%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 
@@ -76,8 +88,7 @@
             </tr>
             </thead>
             <tbody class="table-group-divider">
-            <% for (GrantAccess ga : (List<GrantAccess>)
-                    request.getAttribute("grant-accesses")) { %>
+            <% for (GrantAccess ga : grantAccesses) { %>
             <tr>
                 <td>
                     <%= ga.getRole().getId() %>

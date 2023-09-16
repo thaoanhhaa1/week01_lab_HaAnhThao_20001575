@@ -1,6 +1,5 @@
 <%@ page import="vn.edu.iuh.fit.entities.Account" %>
 <%@ page import="java.util.List" %>
-<%@ page import="vn.edu.iuh.fit.entities.GrantAccess" %>
 <%@ page import="vn.edu.iuh.fit.entities.Role" %>
 <%@ page import="vn.edu.iuh.fit.entities.Status" %>
 <%

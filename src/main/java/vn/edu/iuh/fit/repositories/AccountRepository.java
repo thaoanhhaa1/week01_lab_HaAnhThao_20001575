@@ -76,7 +76,7 @@ public class AccountRepository extends CRUDRepository<Account, String> {
 
     public List<Account> getAccountByRole(String roleId) {
         try {
-            return entityManager.createQuery("FROM Account WHERE status <> ?1 AND id NOT IN (SELECT DISTINCT ga.account.id FROM GrantAccess ga WHERE role.status <> ?2 AND role.id = ?3)", Account.class)
+            return entityManager.createQuery("FROM Account WHERE status <> ?1 AND id IN (SELECT DISTINCT ga.account.id FROM GrantAccess ga WHERE role.status <> ?2 AND role.id = ?3)", Account.class)
                     .setParameter(1, Status.delete)
                     .setParameter(2, Status.delete)
                     .setParameter(3, roleId)

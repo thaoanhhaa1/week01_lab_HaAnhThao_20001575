@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-@WebServlet(urlPatterns = {"/ControlServlet"})
+@WebServlet(urlPatterns = {"/ControlServlet", "/"})
 public class ControlServlet extends HttpServlet {
     private final AccountServices accountServices;
     private final LogServices logServices;
@@ -35,6 +35,9 @@ public class ControlServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
         String action = req.getParameter("action");
+
+        if (action == null)
+            action = "";
 
         switch (action) {
             case "dashboard":
@@ -279,11 +282,12 @@ public class ControlServlet extends HttpServlet {
 
         Account acc = account.get();
         List<GrantAccess> grantAccesses = grantAccessServices.getAllGrantAccessByAccount(id);
+        HttpSession session = req.getSession(true);
 
-        req.setAttribute("account", acc);
-        req.setAttribute("grant-accesses", grantAccesses);
+        session.setAttribute("account-detail", acc);
+        session.setAttribute("grant-accesses-detail", grantAccesses);
 
-        req.getRequestDispatcher("accountDetail.jsp").forward(req, resp);
+        resp.sendRedirect("accountDetail.jsp?id=" + id);
     }
 
     private void handleDisableGrantAccount(@NotNull HttpServletRequest req, @NotNull HttpServletResponse resp) throws IOException {
