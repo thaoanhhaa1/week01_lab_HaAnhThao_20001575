@@ -11,9 +11,19 @@
         request.getRequestDispatcher("forbidden.jsp").forward(request, response);
         return;
     }
-    Object roleObject = request.getAttribute("role");
-    Object accountsObject = request.getAttribute("accounts");
+
     String roleId = request.getParameter("id");
+    if (roleId == null) {
+        request.getRequestDispatcher("notFound.jsp").forward(request, response);
+        return;
+    }
+
+    Object roleObject = session.getAttribute("role");
+    Object accountsObject = session.getAttribute("accounts");
+
+    session.removeAttribute("role");
+    session.removeAttribute("accounts");
+
     if (roleObject == null || accountsObject == null) {
         response.sendRedirect("ControlServlet?action=account-by-role&id=" + roleId);
         return;

@@ -183,11 +183,11 @@ public class ControlServlet extends HttpServlet {
             resp.sendRedirect("ControlServlet?action=dashboard");
         }
         else{
-            req.setAttribute("newAccount", newAccount);
-            req.setAttribute("toast-message", "Add account failed.");
-            req.setAttribute("toast-type", "danger");
+            session.setAttribute("newAccount", newAccount);
+            session.setAttribute("toast-message", "Add account failed.");
+            session.setAttribute("toast-type", "danger");
 
-            req.getRequestDispatcher("addAccount.jsp").forward(req, resp);
+            resp.sendRedirect("addAccount.jsp");
         }
     }
 
@@ -434,9 +434,10 @@ public class ControlServlet extends HttpServlet {
         }
 
         List<Account> accounts = accountServices.getAccountByRole(roleId);
-        req.setAttribute("role", role.get());
-        req.setAttribute("accounts", accounts);
-        req.getRequestDispatcher("accountsOfRole.jsp").forward(req, resp);
+        HttpSession session = req.getSession(true);
+        session.setAttribute("role", role.get());
+        session.setAttribute("accounts", accounts);
+        resp.sendRedirect("accountsOfRole.jsp?id=" + roleId);
     }
 
     private @NotNull Role getRole(@NotNull HttpServletRequest req) {

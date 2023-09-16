@@ -10,9 +10,11 @@
         request.getRequestDispatcher("forbidden.jsp").forward(request, response);
         return;
     }
-%>
-<%
-    Account newAccount = (Account) request.getAttribute("newAccount");
+
+    Account newAccount = (Account) session.getAttribute("newAccount");
+
+    session.removeAttribute("newAccount");
+
     if (newAccount == null)
         newAccount = new Account("", "", "", "", "", Status.active);
 %>
@@ -74,5 +76,19 @@
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+    <script src="./toast.js"></script>
+    <script>
+        <%-- Show toast --%>
+        const toastMessage = "<%= session.getAttribute("toast-message")%>";
+        const toastType = "<%= session.getAttribute("toast-type")%>";
+
+        <%
+            session.removeAttribute("toast-message");
+            session.removeAttribute("toast-type");
+        %>
+
+        if (toastMessage !== 'null')
+            addToast(toastType, toastMessage);
+    </script>
 </body>
 </html>
