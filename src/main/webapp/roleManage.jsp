@@ -6,18 +6,18 @@
     return;
   }
   if (!((Boolean)  session.getAttribute("isAdmin"))) {
-    request.getRequestDispatcher("forbidden.jsp").forward(request,
-            response);
+    request.getRequestDispatcher("forbidden.jsp").forward(request, response);
     return;
   }
+
   Object rolesObject = session.getAttribute("roles");
+  session.removeAttribute("roles");
 
   if (rolesObject == null) {
     response.sendRedirect("ControlServlet?action=role-manage");
     return;
   }
 
-  session.removeAttribute("roles");
   List<Role> roles = (List<Role>) rolesObject;
 %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>

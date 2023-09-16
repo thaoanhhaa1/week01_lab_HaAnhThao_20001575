@@ -4,10 +4,8 @@
     response.sendRedirect("index.jsp");
     return;
 }
-    if (!((Boolean)
-            session.getAttribute("isAdmin"))) {
-        request.getRequestDispatcher("forbidden.jsp").forward(request,
-                response);
+    if (!((Boolean) session.getAttribute("isAdmin"))) {
+        request.getRequestDispatcher("forbidden.jsp").forward(request, response);
         return;
     }
     Object o = request.getAttribute("account-update");

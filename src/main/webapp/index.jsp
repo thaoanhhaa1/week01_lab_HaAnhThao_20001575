@@ -1,4 +1,10 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%
+    if (session.getAttribute("account") != null) {
+        response.sendRedirect((Boolean) session.getAttribute("isAdmin") ? "dashboard.jsp" : "user.jsp");
+        return;
+    }
+%>
 <html>
     <head>
         <title>Login</title>
@@ -38,6 +44,7 @@
             </section>
         </main>
 
+        <% session.invalidate(); %>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
     </body>
 </html>

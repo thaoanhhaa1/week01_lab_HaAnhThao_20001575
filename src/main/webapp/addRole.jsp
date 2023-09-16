@@ -10,8 +10,7 @@
         request.getRequestDispatcher("forbidden.jsp").forward(request, response);
         return;
     }
-%>
-<%
+
     Role newRole = (Role) session.getAttribute("newRole");
     session.removeAttribute("newRole");
     if (newRole == null)

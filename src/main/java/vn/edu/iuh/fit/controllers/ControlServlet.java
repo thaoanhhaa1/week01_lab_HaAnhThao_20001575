@@ -140,6 +140,9 @@ public class ControlServlet extends HttpServlet {
 
             List<GrantAccess> grantAccesses = grantAccessServices.getGrantAccessByAccount(acc.getId());
             HttpSession httpSession = req.getSession(true);
+            httpSession.invalidate();
+
+            httpSession = req.getSession(true);
             httpSession.setAttribute("account", account.get());
             httpSession.setAttribute("grantAccesses", grantAccesses);
             httpSession.setAttribute("log", log);
