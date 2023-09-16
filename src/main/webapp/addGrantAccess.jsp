@@ -75,7 +75,7 @@
             </div>
             <div class="mb-3">
                 <label for="role" class="form-label">Role</label>
-                <select id="role" name="role-id" class="form-select mb-3" aria-label="Default select example">
+                <select id="role" name="role-id" class="form-select mb-3" aria-label="Default select example" required>
                     <option value="" <%= roleID.equals("") ? "selected" : ""  %>>Choose role</option>
                     <% for (Role role : roles) { %>
                         <option <%= role.getId().equals(roleID) ? "selected" : "" %> value="<%= role.getId() %>"><%= role.getName() %></option>

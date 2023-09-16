@@ -193,6 +193,14 @@ public class ControlServlet extends HttpServlet {
     }
 
     private Account findAccount(@NotNull HttpServletRequest req, @NotNull HttpServletResponse resp) throws ServletException, IOException {
+        HttpSession session = req.getSession(true);
+        Boolean isAdmin = (Boolean) session.getAttribute("isAdmin");
+
+        if (isAdmin == null || !isAdmin) {
+            req.getRequestDispatcher("forbidden.jsp").forward(req, resp);
+            return null;
+        }
+
         String id = req.getParameter("id");
 
         if (id == null) {
@@ -262,6 +270,9 @@ public class ControlServlet extends HttpServlet {
     private void handleGetUpdateAccount(@NotNull HttpServletRequest req, @NotNull HttpServletResponse resp) throws ServletException, IOException {
         Account account = findAccount(req, resp);
 
+        if (account == null)
+            return;
+
         req.setAttribute("account-update", account);
         req.getRequestDispatcher("updateAccount.jsp").forward(req, resp);
     }
@@ -300,7 +311,10 @@ public class ControlServlet extends HttpServlet {
 
     private void handleGetDetailAccount(@NotNull HttpServletRequest req, @NotNull HttpServletResponse resp) throws ServletException, IOException {
         Account acc = findAccount(req, resp);
-        assert acc != null;
+
+        if (acc == null)
+            return;
+
         List<GrantAccess> grantAccesses = grantAccessServices.getAllGrantAccessByAccount(acc.getId());
         HttpSession session = req.getSession(true);
 
@@ -508,8 +522,10 @@ public class ControlServlet extends HttpServlet {
     private void handleGetAddGrantAccess(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Account account = findAccount(req, resp);
 
+        if (account == null)
+            return;
+
         HttpSession session = req.getSession(true);
-        assert account != null;
         List<Role> roles = roleServices.getNewRoleForAccount(account.getId());
 
         if (roles.isEmpty()) {
