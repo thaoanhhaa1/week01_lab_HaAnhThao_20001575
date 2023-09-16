@@ -39,6 +39,7 @@
                 <span class="display-1 d-block">404</span>
                 <div class="mb-2 lead">Page Not Found</div>
                 <a href="<%=  (Boolean) session.getAttribute("isAdmin") ? "dashboard.jsp" : "user.jsp" %>" class="btn btn-link">Home</a>
+                <button onclick="history.back()" class="btn btn-link">Back</button>
             </div>
         </div>
     </div>
