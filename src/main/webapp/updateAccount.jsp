@@ -8,11 +8,17 @@
         request.getRequestDispatcher("forbidden.jsp").forward(request, response);
         return;
     }
-    Object o = request.getAttribute("account-update");
+    Object o = session.getAttribute("account-update");
     if (o == null) {
-        request.getRequestDispatcher("notFound.jsp").forward(request, response);
+        String id = request.getParameter("id");
+
+        if (id == null)
+            request.getRequestDispatcher("notFound.jsp").forward(request, response);
+        else
+            response.sendRedirect("ControlServlet?action=update-account&id=" + id);
         return;
     }
+    session.removeAttribute("account-update");
     Account account = (Account) o;
 %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
@@ -91,8 +97,8 @@
 <script src="./toast.js"></script>
 <script>
     <%--    Show toast--%>
-    const toastMessage = "<%= request.getAttribute("toast-message")%>";
-    const toastType = "<%= request.getAttribute("toast-type")%>";
+    const toastMessage = "<%= session.getAttribute("toast-message")%>";
+    const toastType = "<%= session.getAttribute("toast-type")%>";
 
     <%
         session.removeAttribute("toast-message");

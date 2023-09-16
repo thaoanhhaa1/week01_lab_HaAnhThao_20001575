@@ -273,27 +273,28 @@ public class ControlServlet extends HttpServlet {
         if (account == null)
             return;
 
-        req.setAttribute("account-update", account);
-        req.getRequestDispatcher("updateAccount.jsp").forward(req, resp);
+        HttpSession session = req.getSession(true);
+        session.setAttribute("account-update", account);
+        resp.sendRedirect("updateAccount.jsp?id=" + account.getId());
     }
 
     private void handlePostUpdateAccount(@NotNull HttpServletRequest req, @NotNull HttpServletResponse resp) throws IOException, ServletException {
         Account account = getAccount(req);
 
         Optional<Boolean> update = accountServices.update(account);
+        HttpSession session = req.getSession(true);
 
         if (update.isPresent() && update.get()) {
-            HttpSession session = req.getSession(true);
             session.setAttribute("toast-message", "Update account successfully!");
             session.setAttribute("toast-type", "success");
 
             resp.sendRedirect("ControlServlet?action=dashboard");
         } else {
-            req.setAttribute("account-update", account);
-            req.setAttribute("toast-message", "Update account failed.");
-            req.setAttribute("toast-type", "danger");
+            session.setAttribute("account-update", account);
+            session.setAttribute("toast-message", "Update account failed.");
+            session.setAttribute("toast-type", "danger");
 
-            req.getRequestDispatcher("updateAccount.jsp").forward(req, resp);
+            resp.sendRedirect("updateAccount.jsp");
         }
     }
 
@@ -392,9 +393,11 @@ public class ControlServlet extends HttpServlet {
             return;
         }
 
-        req.setAttribute("account", account.get());
-        req.setAttribute("grantAccess", grantAccess.get());
-        req.getRequestDispatcher("updateGrantAccount.jsp").forward(req, resp);
+        HttpSession session = req.getSession(true);
+
+        session.setAttribute("accountGrantAccess", account.get());
+        session.setAttribute("grantAccess", grantAccess.get());
+        resp.sendRedirect(String.format("updateGrantAccount.jsp?id=%s&role-id=%s", id, roleId));
     }
 
     private void handlePostUpdateGrantAccess(@NotNull HttpServletRequest req, @NotNull HttpServletResponse resp) throws IOException, ServletException {
@@ -402,25 +405,24 @@ public class ControlServlet extends HttpServlet {
         String roleId = req.getParameter("role-id");
         String grant = req.getParameter("grant");
         boolean isGrant = grant != null && grant.equals("active");
-
         String note = req.getParameter("note");
 
         GrantAccess grantAccess = new GrantAccess(new Role(roleId), new Account(id), isGrant, note);
 
         Optional<Boolean> update = grantAccessServices.update(grantAccess);
+        HttpSession session = req.getSession(true);
 
         if (update.isPresent() && update.get()) {
-            HttpSession session = req.getSession(true);
             session.setAttribute("toast-message", "Update grant account successfully!");
             session.setAttribute("toast-type", "success");
 
             resp.sendRedirect(String.format("ControlServlet?action=account-detail&id=%s", id));
         } else {
-            req.setAttribute("grantAccess", grantAccess);
-            req.setAttribute("toast-message", "Update grant account failed.");
-            req.setAttribute("toast-type", "danger");
+            session.setAttribute("grantAccess", grantAccess);
+            session.setAttribute("toast-message", "Update grant account failed.");
+            session.setAttribute("toast-type", "danger");
 
-            req.getRequestDispatcher("updateGrantAccount.jsp").forward(req, resp);
+            resp.sendRedirect(String.format("updateGrantAccount.jsp?id=%s&role-id=%s", id, roleId));
         }
     }
 

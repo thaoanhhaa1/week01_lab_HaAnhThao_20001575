@@ -9,12 +9,24 @@
         return;
     }
 
-    Object accountObject = request.getAttribute("account");
-    Object grantAccessObject = request.getAttribute("grantAccess");
+    String id = request.getParameter("id");
+    String roleId = request.getParameter("role-id");
+
+    if (id == null || roleId == null) {
+        request.getRequestDispatcher("notFound.jsp").forward(request, response);
+        return;
+    }
+
+    Object accountObject = session.getAttribute("accountGrantAccess");
+    Object grantAccessObject = session.getAttribute("grantAccess");
 
     if (accountObject == null || grantAccessObject == null) {
-        request.getRequestDispatcher("notFound.jsp").forward(request, response);
+        response.sendRedirect(String.format("ControlServlet?action=update-grant-access&id=%s&role-id=%s", id, roleId));
+        return;
     }
+
+    session.removeAttribute("accountGrantAccess");
+    session.removeAttribute("grantAccess");
 
     Account account = (Account) accountObject;
     GrantAccess grantAccess = (GrantAccess) grantAccessObject;
